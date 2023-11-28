@@ -1,8 +1,7 @@
 
 #include <iostream>
-#include<string>\
-//#include<future>
-#include<Windows.h>
+#include<fstream>
+#include<string>
 using namespace std;
 
 class Angajat {
@@ -10,18 +9,38 @@ class Angajat {
 private:
 
 	const int id;
-
 	string nume;
-
 	int varsta;
-
 	float salariu; //mii lei
-
 	static int varstaPensionare;
-
 	char* domeniu;
 
 public:
+
+	int operator()() {
+		int a = 0;
+		if (Angajat::varstaPensionare > this->varsta) {
+			a = Angajat::varstaPensionare - this->varsta;
+			return a;
+		}
+		else
+		{
+			return a;
+		}
+	}
+
+	explicit operator string(){
+		return this->nume;
+	}
+
+	explicit operator int() {
+		return this->varsta;
+	}
+
+	explicit operator float() {
+		return this->salariu;
+	}
+
 	
 	const int getIDAngajat()  {
 
@@ -244,6 +263,8 @@ public:
 
 	}
 
+	
+
 };
 
 istream& operator>>(istream& floare, Angajat& a) {
@@ -288,7 +309,6 @@ ostream& operator<<(ostream& dinozaur, const Angajat& a) {
 
 	dinozaur << endl;
 
-	Sleep(500);
 
 	return dinozaur;
 
@@ -297,6 +317,173 @@ ostream& operator<<(ostream& dinozaur, const Angajat& a) {
 }
 
 int Angajat::varstaPensionare = 65;
+
+
+class Proiect {
+private:
+
+	string numeProiect;
+	int durata;
+	float buget; 
+	int nrMembri;
+	Angajat* membriProiect;
+
+public:
+
+	Angajat* getMembru() {
+		return this->membriProiect;
+	}
+	int getNrMembri() {
+		return this->nrMembri;
+	}
+	void setMembri(int nr, Angajat* m) {
+		if (this->membriProiect != NULL) {
+			delete[]this->membriProiect;
+		}
+		if (nr >= 0) {
+			this->nrMembri = nr;
+		}
+		if (nr > 0) {
+			this->membriProiect = new Angajat[nr];
+			for (int i = 0; i < nr; i++) {
+				this->membriProiect[i] = m[i];
+			}
+		}
+		else
+			this->membriProiect = NULL;
+	}
+	float getBuget() {
+		return this->buget;
+	}
+	void setBuget(float b) {
+		if (b > 0) {
+			this->buget = b;
+		}
+	}
+	int getDurata() {
+		return this->durata;
+	}
+	void setDurata(int i) {
+		if (i > 0) {
+			this->durata = i;
+		}
+	}
+	string getNumeProiect() {
+		return this->numeProiect;
+	}
+	void setNumeProiect(string n) {
+		if (n.length() > 3) {
+			this->numeProiect = n;
+		}
+	}
+
+	Proiect() {
+		this->numeProiect = "Platforma de Management de Proiecte";
+		this->durata = 6;
+		this->buget = 150000;
+		this->nrMembri = 2;
+		this->membriProiect = new Angajat[2];
+	}
+
+	Proiect(int durata, float bug) :durata(durata), buget(bug) {
+		this->numeProiect = "Platforma de E-learning";
+		this->nrMembri = 0;
+		this->membriProiect = NULL;
+	}
+
+	Proiect(string nume, int d, float b, int nrM, Angajat* mem) {
+		this->numeProiect = nume;
+		this->durata = d;
+		this->buget = b;
+		this->nrMembri = nrM;
+		if (nrM > 0) {
+			this->membriProiect = new Angajat[nrM];
+			for (int i = 0; i < nrM; i++) {
+				this->membriProiect[i] = mem[i];
+			}
+		}
+		else
+		
+		{
+			this->membriProiect = NULL;
+		}
+	}
+
+	Angajat& operator[](int index) {
+		if (this->membriProiect!=NULL && index >= 0 && index < this->nrMembri) {
+			return this->membriProiect[index];
+		}
+	}
+	
+
+	Proiect(const Proiect& p) {
+		this->numeProiect = p.numeProiect;
+		this->durata = p.durata;
+		this->buget = p.buget;
+		this->nrMembri = p.nrMembri;
+		if (this->nrMembri > 0) {
+			this->membriProiect = new Angajat[this->nrMembri];
+			for (int i = 0; i < this->nrMembri; i++) {
+				this->membriProiect[i] = p.membriProiect[i];
+			}
+		}
+		else
+			this->membriProiect = NULL;
+	}
+
+	Proiect& operator=(const Proiect& p) {
+		if (this != &p) {
+			if (this->membriProiect != NULL) {
+				delete[]this->membriProiect;
+			}
+			this->numeProiect = p.numeProiect;
+			this->durata = p.durata;
+			this->buget = p.buget;
+			this->nrMembri = p.nrMembri;
+			if (this->nrMembri > 0) {
+				this->membriProiect = new Angajat[this->nrMembri];
+				for (int i = 0; i < this->nrMembri; i++) {
+					this->membriProiect[i] = p.membriProiect[i];
+				}
+			}
+			else
+				this->membriProiect = NULL;
+		}
+		return *this;
+	}
+	
+	~Proiect() {
+		if (this->membriProiect != NULL) {
+			delete[]this->membriProiect;
+		}
+	}
+
+	friend ostream& operator<<(ostream& afi, const Proiect& p);
+	
+};
+
+ostream& operator<<(ostream& afi, const Proiect& p) {
+	
+	afi << "Nume proiect :" << p.numeProiect << endl;
+	afi << "Durata: " << p.durata << " luni" << endl;
+	afi << "Buget: " << p.buget << " mii lei" << endl;
+	afi << "Nr membri: " << p.nrMembri << endl;
+	afi << "Acestia sunt: \n";
+	if (p.nrMembri > 0) {
+		afi << endl;
+		for (int i = 0; i < p.nrMembri; i++) {
+			afi << p.membriProiect[i];
+		}
+		afi << endl;
+	}
+	else
+	{
+		afi << " - ";
+		afi << endl;
+	}
+	afi << endl;
+	return afi;
+}
 
 class Sediu {
 
@@ -315,6 +502,15 @@ private:
 	const int id;
 
 public:
+
+	explicit operator int() {
+		return this->nrCamere;
+	}
+
+	explicit operator float() {
+		return this->suprafata;
+	}
+
 
 	const int getIDSediu() {
 
@@ -407,9 +603,6 @@ public:
 		return this->locatie;
 
 	}
-
-
-
 
 	Sediu(const Sediu& s) :id(s.id) {
 
@@ -520,9 +713,21 @@ public:
 		
 		Sediu aux = *this;
 
+		float supM = 0;
+		supM = this->suprafata / (float)this->nrCamere;
+
 		aux.nrCamere = this->nrCamere + nrCam;
 
+		aux.suprafata = this->suprafata + supM * nrCam;
+
 		return aux;
+
+	}
+
+	float operator()(){
+		float medie = 0;
+		medie = this->suprafata / (float)this->nrCamere;
+		return medie;
 
 	}
 
@@ -531,7 +736,19 @@ public:
 	friend ostream& operator<<(ostream& afis, const Sediu& s);
 
 	friend istream& operator>>(istream& apa, Sediu& se);
+
+	friend ofstream& operator<<(ofstream& afisare, const Sediu& s);
 };
+
+ofstream& operator<<(ofstream& afisare, const Sediu& s) {
+
+	afisare << s.id << "." << "Locatie sediu: " << s.locatie;
+	afisare << endl << "Numar camere: " << s.nrCamere << endl;
+	afisare << "Suprafata: " << s.suprafata << " metri patrati" << endl;
+	afisare << "Numar telefon: " << s.numarTelefon << endl;
+	afisare << "Numar total sedii: " << s.nrTotalSedii << endl << endl;
+	return afisare;
+}
 
 istream& operator>>(istream& apa, Sediu& se) {
 
@@ -572,7 +789,7 @@ ostream& operator<<(ostream& afis, const Sediu& s) {
 	afis << "Numar telefon: " << s.numarTelefon << endl;
 
 	afis << "Numar total sedii: " << s.nrTotalSedii << endl << endl;
-	Sleep(500);
+
 	return afis;
 
 }
@@ -599,6 +816,34 @@ private:
 	static string tara;
 
 public:
+
+	explicit operator int() {
+		return this->anInfiintare;
+	}
+	explicit operator string() {
+		return this->nume;
+	}
+
+	int& operator[](int index) {
+		if (index >= 0 && index < this->numarAngajati) {
+			return this->varsteAngajati[index];
+		}
+	}
+
+	float operator()() {
+		float medie = 0;
+		if (this->numarAngajati > 0) {
+			for (int i = 0; i < this->numarAngajati; i++) {
+				medie += this->varsteAngajati[i];
+			}
+			medie = medie / (float)this->numarAngajati;
+			return medie;
+		}
+		else
+		{
+			return medie;
+		}
+	}
 
 	static string getTara() {
 
@@ -917,9 +1162,44 @@ public:
 		return aux;
 	}
 
-	friend ostream& operator<<(ostream& telefon, const Companie& c);
+	friend ostream& operator<<(ostream& telefon, const Companie& companie);
 
 	friend istream& operator>>(istream& citire, Companie& c);
+
+	friend ofstream& operator<<(ofstream& mouse, const Companie& companie) {
+
+		mouse << companie.id << "." << "Nume companie: " << companie.nume << endl;
+		mouse << "An infiintare: " << companie.anInfiintare << endl;
+		mouse << "Domeniu activitate: " << companie.domeniuActivitate << endl;
+		mouse << "Numar angajati: " << companie.numarAngajati << endl;
+		mouse << "Varste angajati(ani): ";
+		if (companie.varsteAngajati != NULL)
+
+		{
+
+			for (int i = 0; i < companie.numarAngajati; i++)
+
+			{
+
+				mouse << companie.varsteAngajati[i] << ' ';
+
+			}
+
+
+		}
+
+		else
+
+		{
+			mouse << " - ";
+		}
+		mouse << endl;
+		mouse << "Tara activitate: " << companie.tara << endl << endl;
+
+		return mouse;
+
+
+	}
 
 };
 
@@ -932,6 +1212,7 @@ istream& operator>>(istream& citire, Companie& c) {
 	}
 
 	cout << "Nume companie: ";
+	//getline(citire, c.nume);
 	citire >> c.nume;
 	cout << "An infiintare: ";
 	citire >> c.anInfiintare;
@@ -995,7 +1276,7 @@ ostream& operator<<(ostream& telefon, const Companie& companie) {
 
 
 	telefon << "Tara activitate: " << companie.tara << endl << endl;
-	Sleep(500);
+
 	return telefon;
 
 
@@ -1006,14 +1287,6 @@ string Companie::tara = "Romania";
 
 void main() {
 
-	//Angajat angajat13;
-	//cout << angajat13;
-	//cin >> angajat13;
-	//cout << angajat13;
-
-	//Angajat angajat14;
-	//angajat14 = angajat13 + 13;
-	//cout << angajat14;
 
 	cout << "COMPANII\n\n";
 
@@ -1123,7 +1396,7 @@ void main() {
 	//companie7.afisare();
 
 	cout << companie7;
-	
+
 
 	Companie companie9;
 	cin >> companie9;
@@ -1213,7 +1486,7 @@ void main() {
 	sediu7 = sediu3;
 	//sediu7.afisare();
 	cout << sediu7;
-	
+
 	cout << "SEDIU 8:\n ";
 	Sediu sediu8;
 	cin >> sediu8;
@@ -1312,8 +1585,145 @@ void main() {
 	angajat8 = angajat8 + 7;
 	cout << angajat8;
 
+	Angajat angajat13;
+	cout << angajat13;
+	cin >> angajat13;
+	cout << angajat13;
+
+	Angajat angajat14;
+	angajat14 = angajat13 + 13;
+	cout << angajat14;
+
 	cout << "-----------------------------------\n\n";
-	
+
+	string n;
+	n = (string)angajat1;
+
+	int v;
+	v = (int)angajat1;
+
+	float s;
+	s = (float)angajat1;
+
+	cout << n << endl << v << endl << s << endl;
+
+	cout << angajat8.operator()() << endl;
+
+	cout << "-----------------------------------\n\n";
+
+	cout << "Suprafata medie/camera a sediului cu id-ul " << sediu5.getIDSediu() << " este " << sediu5.operator()() << " mp" << endl;
+
+	int b;
+	b = (int)sediu5;
+	float b1;
+	b1 = (float)sediu5;
+	cout << b << endl << b1 << endl;
+
+	cout << "-----------------------------------\n\n";
+	cout << companie7;
+	companie7[1] = 13;
+	cout << companie7;
+	cout << companie7.operator()() << endl;
+
+	int abc;
+	abc = (int)companie7;
+	string cba;
+	cba = (string)companie7;
+	cout << abc << endl << cba << endl;
+
+
+	cout << "-----------------------------------\n\n";
+
+	//vectori si matrici
+
+	Angajat* vectorAngajat = new Angajat[3];
+	for (int i = 0; i < 3; i++) {
+		cin >> vectorAngajat[i];
+		cout << endl;
+	}
+	for (int i = 0; i < 3; i++) {
+		cout << vectorAngajat[i] << endl << endl;
+	}
+	cout << endl;
+	Sediu* vectorSediu = new Sediu[2];
+	for (int i = 0; i < 2; i++) {
+		cin >> vectorSediu[i];
+		cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < 2; i++) {
+		cout << vectorSediu[i] << endl << endl;
+	}
+
+	Companie* vectorCompanie = new Companie[2];
+	for (int i = 0; i < 2; i++) {
+		cin >> vectorCompanie[i];
+		cout << endl;
+	}
+	cout << endl;
+	for (int i = 0; i < 2; i++) {
+		cout << vectorCompanie[i];
+		cout << endl << endl;
+	}
+
+	delete[]vectorAngajat;
+	delete[]vectorCompanie;
+	delete[]vectorSediu;
+
+	Companie** matrice = new Companie * [2];
+	for (int i = 0; i < 2; i++) {
+		matrice[i] = new Companie[2];
+	}
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			cin>> matrice[i][j];
+			cout << endl;
+		}
+	}
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			cout << matrice[i][j];
+		}
+
+		for (int i = 0; i < 2; i++) {
+			delete[]matrice[i];
+		}
+		delete[]matrice;
+	}
+
+	cout << "-----------------------------------\n\n";
+
+	//relatia de has-a
+
+	Angajat angajatRelatie1;
+	cin >> angajatRelatie1;
+	cout << endl;
+	Angajat angajatRelatie2;
+	cin >> angajatRelatie2;
+	cout << endl;
+
+	Angajat* vector = new Angajat[2]{ angajatRelatie1 ,angajatRelatie2 };
+
+	Proiect primulProiect("Project X", 12, 43000, 2, vector);
+	cout << primulProiect;
+
+	cout << "-----------------------------------\n\n";
+
+
+	Companie companieFisierText;
+	cin >> companieFisierText;
+	ofstream g("Companie.txt", ios::app);
+	g << companieFisierText;
+	g.close();
+
+	Sediu sediuFisierText;
+	cin >> sediuFisierText;
+	ofstream f("Sediu.txt", ios::app);
+	f << sediuFisierText;
+	f.close();
+
 
 
 }
