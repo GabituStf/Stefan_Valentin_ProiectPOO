@@ -1,10 +1,20 @@
-
 #include <iostream>
 #include<fstream>
 #include<string>
 using namespace std;
 
-class Angajat {
+class Descriere {
+public:
+	virtual void caracteristici() = 0;
+};
+
+class Informatii {
+public:
+	virtual void afisareInformatii() = 0;
+};
+
+
+class Angajat :public Descriere {
 
 private:
 
@@ -16,6 +26,11 @@ private:
 	char* domeniu;
 
 public:
+
+	void caracteristici() override {
+		cout << "Angajatul are varsta de " << this->getVarstaAngajat() << " ani" << endl;
+	}
+
 
 	int operator()() {
 		int a = 0;
@@ -169,6 +184,22 @@ public:
 
 
 	}
+	Angajat(int varsta) :id(14)
+
+	{
+
+		this->nume = "Solea Ianis";
+
+		this->varsta = varsta;
+
+		this->salariu = 3.2;
+
+		this->domeniu = new char[strlen("Vanzator") + 1];
+
+		strcpy_s(domeniu, strlen("Vanzator") + 1, "Vanzator");
+
+
+	}
 
 	Angajat(int idNou, float salariuNou) :id(idNou), salariu(salariuNou)
 	
@@ -192,7 +223,7 @@ public:
 		strcpy_s(domeniu, strlen(domeniuNou) + 1, domeniuNou);
 	}
 
-	~Angajat() {
+    virtual	~Angajat() {
 
 
 		if (this->domeniu != NULL)
@@ -203,23 +234,6 @@ public:
 
 		}
 	}
-
-	//void afisare() {
-
-	//	cout << id << "." << "Nume angajat: "<< nume << endl;
-
-	//	cout<< "Varsta: " << varsta << endl;
-	//	
-	//	cout << "Salariu: " << salariu << " mii lei" << endl;
-	//	
-	//	cout << "Ocupatie: " << domeniu << endl;
-	//	
-	//	cout << "Varsta pensionare: " << varstaPensionare << endl;
-	//	
-	//	cout << endl;
-
-
-	//}
 
 	Angajat operator=(const Angajat& ang) {
 
@@ -263,7 +277,6 @@ public:
 
 	}
 
-	
 
 };
 
@@ -319,6 +332,123 @@ ostream& operator<<(ostream& dinozaur, const Angajat& a) {
 int Angajat::varstaPensionare = 65;
 
 
+
+class Manager :public Angajat {
+private:
+	int nrMembriFamilie;
+	string mancarePreferata;
+	float inaltime;
+public:
+
+	void caracteristici() override {
+		cout << "Managerul are inca " << this->getNrMembri() << " membri in familie " << endl;
+	}
+
+	void setNrMembri(int nr) {
+		if (nr > 0) {
+			this->nrMembriFamilie = nr;
+		}
+	}
+	int getNrMembri() {
+		return this->nrMembriFamilie;
+	}
+	void setMancare(string m) {
+		if (m.length() > 2) {
+			this->mancarePreferata = m;
+		}
+	}
+	string getMancare() {
+		return this->mancarePreferata;
+	}
+	void setInaltime(float in) {
+		if (in >= 1) {
+			this->inaltime = in;
+		}
+	}
+	float getInaltime() {
+		return this->inaltime;
+	}
+
+
+
+	Manager() :Angajat() {
+		this->nrMembriFamilie = 3;
+		this->mancarePreferata = "Peste";
+		this->inaltime = 1.75;
+	}
+	Manager(int nrM, float sal) :Angajat(5, sal) {
+		this->nrMembriFamilie = nrM;
+		this->mancarePreferata = "Ciorba";
+		this->inaltime = 1.63;
+	}
+	Manager(int nR, float inaltime, string mancare, int ID, float salariuN) :Angajat(ID, salariuN) {
+		this->nrMembriFamilie = nR;
+		this->inaltime = inaltime;
+		this->mancarePreferata = mancare;
+	}
+
+	Manager(const Manager& om) :Angajat(om) {
+		this->inaltime = om.inaltime;
+		this->mancarePreferata = om.mancarePreferata;
+		this->nrMembriFamilie = om.nrMembriFamilie;
+	}
+
+	Manager& operator=(const Manager& o) {
+		if (this != &o) {
+			Angajat::operator=(o);
+			this->inaltime = o.inaltime;
+			this->mancarePreferata = o.mancarePreferata;
+			this->nrMembriFamilie = o.nrMembriFamilie;
+
+		}
+		return *this;
+	}
+
+	friend ostream& operator<<(ostream& afis, const Manager& o) {
+		afis << "Nr membri familie: " << o.nrMembriFamilie << endl;
+		afis << "Inaltime: " << o.inaltime << " m " << endl;
+		afis << "Mancare preferata: " << o.mancarePreferata << endl;
+		afis << (Angajat)o;
+		afis << endl;
+
+		return afis;
+	}
+
+};
+
+class SediuCuAngajati {
+private:
+	int nrAng;
+	Descriere** angajati;
+public:
+
+	int getNrA() {
+		return this->nrAng;
+	}
+
+	SediuCuAngajati() {
+		this->nrAng = 10;
+		this->angajati = new Descriere * [10];
+		for (int i = 0; i < 9; i++) {
+			this->angajati[i] = new Angajat();
+		}
+		this->angajati[this->nrAng - 1] = new Manager();
+
+	}
+
+	Descriere*& operator[](int index) {
+		if (index >= 0 && index < this->nrAng) {
+			return this->angajati[index];
+		}
+	}
+
+	~SediuCuAngajati() {
+		if (this->angajati != NULL) {
+			delete[]this->angajati;
+		}
+	}
+};
+
 class Proiect {
 private:
 
@@ -327,7 +457,7 @@ private:
 	float buget; 
 	int nrMembri;
 	Angajat* membriProiect;
-
+	 
 public:
 
 	Angajat* getMembru() {
@@ -485,7 +615,9 @@ ostream& operator<<(ostream& afi, const Proiect& p) {
 	return afi;
 }
 
-class Sediu {
+
+
+class Sediu: public Informatii{
 
 private:
 
@@ -502,6 +634,10 @@ private:
 	const int id;
 
 public:
+
+	void afisareInformatii() override {
+		cout << "Sediul are " << this->getNrCamereSediu() << " nr camere si o suprafata de " << this->suprafata << " mp\n";
+	}
 
 	explicit operator int() {
 		return this->nrCamere;
@@ -655,7 +791,7 @@ public:
 
 	}
 
-	~Sediu() {
+	virtual ~Sediu() {
 
 		if (this->locatie != NULL)
 		
@@ -665,21 +801,6 @@ public:
 		}
 
 	}
-
-	/*void afisare() {
-
-		cout << id << "." << "Locatie sediu: " << locatie;
-		
-		cout << endl << "Numar camere: " << nrCamere << endl;
-		
-		cout << "Suprafata: " << suprafata << " metri patrati" << endl;
-
-		cout << "Numar telefon: " << numarTelefon << endl;
-
-		cout << "Numar total sedii: " << nrTotalSedii << endl << endl;
-
-
-	}*/
 
 
 	Sediu operator=(const Sediu& s)
@@ -797,13 +918,144 @@ ostream& operator<<(ostream& afis, const Sediu& s) {
 int Sediu::nrTotalSedii = 3;
 
 
+class Cladire :public Sediu {
+private:
+	int nrEtaje;
+	int anConstructie;
+	bool areLift;
+	int capacitateParcare;
+
+public:
+
+	void afisareInformatii() override {
+		cout << "Parcarea are o capacitate de " << this->getCapacitate() << " locuri" << endl;
+	}
+
+
+	int getCapacitate() {
+		return this->capacitateParcare;
+	}
+
+	void setCapacitate(int nr) {
+		if (nr >= 0) {
+			this->capacitateParcare = nr;
+		}
+	}
+
+	void setAnConstructie(int an) {
+		if (an > 1950) {
+			this->anConstructie = an;
+		}
+	}
+
+	int getAn() {
+		return this->anConstructie;
+	}
+
+	int getNrEraje() {
+		return this->nrEtaje;
+	}
+	void setNrEtaje(int nr) {
+		if (nr > 0) {
+			this->nrEtaje = nr;
+		}
+	}
+
+	
+	Cladire() :Sediu() {
+		this->nrEtaje = 5;
+		this->anConstructie = 1977;
+		this->areLift = false;
+		this->capacitateParcare = 50;
+	}
+
+	Cladire(int nrEtaje, int capacitateParcare, int id) :Sediu(id, "0782490062") {
+		this->nrEtaje = nrEtaje;
+		this->anConstructie = 1962;
+		this->areLift = true;
+		this->capacitateParcare = capacitateParcare;
+	}
+
+	Cladire(int nr, int anC, bool lift, int parcare, int idNou, int nrCamereNoi, float suprafataNoua, string numarNou, char* locatieNoua) :Sediu(idNou, nrCamereNoi, suprafataNoua, numarNou, locatieNoua) {
+	
+		this->nrEtaje = nr;
+		this->anConstructie = anC;
+		this->areLift = lift;
+		this->capacitateParcare = parcare;
+		
+	}
+
+	friend ostream& operator<<(ostream& afi, const Cladire& c) {
+
+		afi << "Nr etaje cladire: " << c.nrEtaje << endl;
+		afi << "An constructie cladire: " << c.anConstructie << endl;
+		afi << (c.areLift ? "Are lift" : "Nu are lift") << endl;
+		afi << "Capacitate parcare: " << c.capacitateParcare << " locuri" << endl;
+		afi << (Sediu)c;
+		return afi;
+	}
+
+	Cladire(const Cladire& c) :Sediu(c) {
+		this->anConstructie = c.anConstructie;
+		this->areLift = c.areLift;
+		this->capacitateParcare = c.capacitateParcare;
+		this->nrEtaje = c.nrEtaje;
+	}
+
+	Cladire& operator=(const Cladire& c) {
+		if (this != &c) {
+			Sediu::operator=(c);
+			this->anConstructie = c.anConstructie;
+			this->areLift = c.areLift;
+			this->capacitateParcare = c.capacitateParcare;
+			this->nrEtaje = c.nrEtaje;
+
+		}
+		return *this;
+	}
+
+};
+
+class ComplexCuSedii {
+private:
+	int nrSedii;
+	Informatii** sediu;
+public:
+
+	int getNS() {
+		return this->nrSedii;
+	}
+
+	ComplexCuSedii() {
+		this->nrSedii = 10;
+		this->sediu = new Informatii * [10];
+		for (int i = 0; i < this->nrSedii; i++) {
+			this->sediu[i] = new Sediu();
+		}
+	}
+
+	Informatii*& operator[](int index) {
+		if (index >= 0 && index < this->nrSedii) {
+			return this->sediu[index];
+		}
+	}
+
+	~ComplexCuSedii() {
+		if (this->sediu != NULL) {
+			delete[]this->sediu;
+		}
+	}
+
+};
+
+
 class Companie {
 
 private:
 
 	int anInfiintare;
 
-	string nume;
+	char* nume;
 
 	string domeniuActivitate;
 
@@ -820,7 +1072,7 @@ public:
 	explicit operator int() {
 		return this->anInfiintare;
 	}
-	explicit operator string() {
+	explicit operator char*() {
 		return this->nume;
 	}
 
@@ -882,17 +1134,23 @@ public:
 		return this->anInfiintare;
 	}
 
-	void setNumeCompanie(string nume) {
+	void setNumeCompanie(char* nume) {
 
-		if (nume.length() > 2) {
+		if (strlen(nume) > 2) {
 
-			this->nume = nume;
+			if (this->nume != NULL) {
+				delete[]this->nume;
+			}
+
+
+			this->nume = new char[strlen(nume) + 1];
+			strcpy_s(this->nume, strlen(nume) + 1, nume);
 
 		}
-
 	}
+	
 
-	string getNumeCompanie() {
+	char* getNumeCompanie() {
 
 		return this->nume;
 
@@ -958,7 +1216,8 @@ public:
 
 		this->anInfiintare = 2022;
 
-		this->nume = "Bussiness Pure SRL";
+		this->nume = new char[strlen("Business Pure SRL") + 1];
+		strcpy_s(this->nume, strlen("Business Pure SRL") + 1, "Business Pure SRL");
 
 		this->domeniuActivitate = "Contabilitate";
 
@@ -969,7 +1228,9 @@ public:
 
 	}
 
-	Companie(int idNou, string numeNou) :id(idNou), nume(numeNou) {
+	Companie(int idNou, char* numeNou) :id(idNou) {
+		this->nume = new char[strlen(numeNou) + 1];
+		strcpy_s(this->nume, strlen(numeNou) + 1, numeNou);
 
 		this->anInfiintare = 2019;
 
@@ -980,7 +1241,9 @@ public:
 		this->varsteAngajati = NULL;
 	}
 
-	Companie(int idNou,int anInfiintareNou, string numeNou, string domeniuNou,int numarAngajati, int* varsteAngajati):id(idNou),anInfiintare(anInfiintareNou),nume(numeNou),domeniuActivitate(domeniuNou),numarAngajati(numarAngajati){
+	Companie(int idNou,int anInfiintareNou, char* numeNou, string domeniuNou,int numarAngajati, int* varsteAngajati):id(idNou),anInfiintare(anInfiintareNou),domeniuActivitate(domeniuNou),numarAngajati(numarAngajati){
+		this->nume = new char[strlen(numeNou) + 1];
+		strcpy_s(this->nume, strlen(numeNou) + 1, numeNou);
 
 		if (numarAngajati != 0) {
 
@@ -1009,58 +1272,22 @@ public:
 
 		}
 
+		if (this->nume != NULL) {
+		
+			delete[]this->nume;
+		
+		}
+
 
 	}
 
-	/*void afisare() {
-
-		cout << id << "." << "Nume companie: " << nume << endl;
-
-		cout << "An infiintare: " << anInfiintare << endl;
-
-		cout << "Domeniu activitate: " << domeniuActivitate << endl;
-
-		cout << "Numar angajati: " << numarAngajati << endl;
-
-		cout << "Varste angajati(ani): ";
-
-		if (varsteAngajati != NULL)
-
-		{
-
-			for (int i = 0; i < numarAngajati; i++)
-
-			{
-
-				cout << varsteAngajati[i] << ' ';
-
-			}
-
-
-		}
-
-		else
-		
-		{
-
-			    cout << " - ";
-		    
-		}
-
-		cout << endl;
-
-
-		cout << "Tara activitate: " << tara << endl << endl;
-		
-		
-
-	}*/
 
 	Companie(const Companie& c) :id(c.id) {
 
 		this->anInfiintare = c.anInfiintare;
 
-		this->nume = c.nume;
+		this->nume = new char[strlen(c.nume) + 1];
+		strcpy_s(this->nume, strlen(c.nume) + 1, c.nume);
 
 		this->domeniuActivitate = c.domeniuActivitate;
 
@@ -1094,9 +1321,16 @@ public:
 
 			}
 
+			if (this->nume != NULL) {
+
+				delete[]this->nume;
+			
+			}
+
 			this->anInfiintare = c.anInfiintare;
 
-			this->nume = c.nume;
+			this->nume = new char[strlen(c.nume) + 1];
+			strcpy_s(this->nume, strlen(c.nume) + 1, c.nume);
 
 			this->domeniuActivitate = c.domeniuActivitate;
 
@@ -1210,14 +1444,26 @@ istream& operator>>(istream& citire, Companie& c) {
 		delete[]c.varsteAngajati;
 
 	}
-
+	if (c.nume != NULL) {
+		delete[]c.nume;
+	}
+	
+	string aux1;
 	cout << "Nume companie: ";
-	//getline(citire, c.nume);
-	citire >> c.nume;
+	cin.ignore();
+	getline(citire, aux1);
+
+	
+
+	c.nume = new char[aux1.length() + 1];
+	strcpy_s(c.nume, aux1.length() + 1, aux1.c_str());
+
 	cout << "An infiintare: ";
 	citire >> c.anInfiintare;
+	cin.ignore();
 	cout << "Domeniu activitate: ";
-	citire >> c.domeniuActivitate;
+
+	getline(cin, c.domeniuActivitate);
 	cout << "Numar angajati: ";
 	citire >> c.numarAngajati;
 	
@@ -1285,17 +1531,97 @@ ostream& operator<<(ostream& telefon, const Companie& companie) {
 string Companie::tara = "Romania";
 
 
+void afisareMeniu() {
+	cout << endl;
+	cout << "MENIU:\n";
+	cout << "1. Afisare obiect" << endl;
+	cout << "2. Seteaza tara" << endl;
+	cout << "3. Detalii angajati" << endl;
+	cout << "4. Actualizare informatii obiect" << endl;
+	cout << "5. Iesire" << endl;
+	cout << "Introduceti optiunea dorita: ";
+}
+
 void main() {
+	
+
+	// MENIU SI ACTIUNI PENTRU CLASA COMPANIE
+
+	int optiune;
+	string tz;
+
+	int* varsteOptiune = new int[3];
+	varsteOptiune[0] = 20;
+	varsteOptiune[1] = 30;
+	varsteOptiune[2] = 40;
+
+	char* numeOptiune1 = new char[strlen("RADION SRL") + 1];
+	strcpy_s(numeOptiune1, strlen("RADION SRL") + 1, "RADION SRL");
+	 
+	Companie optiune1(19, 2015, numeOptiune1, "Scoala Soferi", 3, varsteOptiune);
 
 
+	do {
+
+		afisareMeniu();
+		cin >> optiune;
+		cout << endl;
+
+		switch (optiune) {
+		case 1:
+			cout << optiune1;
+			break;
+		case 2:
+			cout << optiune1;
+			cout << "Alege tara noua: ";
+			cin >> tz;
+			optiune1.setTara(tz);
+			cout << endl;
+			cout << optiune1;
+
+			break;
+		case 3:
+			cout << endl;
+			cout << "Numarul de angajati este: " << optiune1.getNrAng() << endl;
+			cout << "Varstele acestora: ";
+			if (optiune1.getNrAng() > 0) {
+				for (int i = 0; i < optiune1.getNrAng(); i++) {
+					cout << optiune1.getVarsteAng()[i] << " , ";
+				}
+				cout << endl;
+			}
+			else
+			{
+				cout << " - \n";
+			}
+
+			break;
+		case 4:
+			cout << optiune1;
+			cin >> optiune1;
+			cout << endl << endl;
+			cout << optiune1;
+			cout << endl;
+			break;
+		default:
+			cout << "\nOptiune invalida. Te rog sa alegi din nou." << endl;
+
+		}
+
+	} while (optiune != 5);
+	
+
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZELE 1-2-3~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
+	
 	cout << "COMPANII\n\n";
 
 	Companie companie1;
-	//companie1.afisare();
 	cout << "companie1:\n" << companie1;
 
-	Companie companie2(3, "La Canapele");
-	//companie2.afisare();
+	char* luni = new char[strlen("La Canapele") + 1];
+	strcpy_s(luni, strlen("La Canapele") + 1, "La Canapele");
+
+	Companie companie2(3, luni);
 	cout << "companie2:\n";
 	cout << companie2;
 
@@ -1303,26 +1629,25 @@ void main() {
 	varste[0] = 25;
 	varste[1] = 37;
 	varste[2] = 48;
+	
+	char* marti = new char[strlen("Trei Barcute SRL") + 1];
+	strcpy_s(marti, strlen("Trei Barcute SRL") + 1, "Trei Barcute SRL");
 
-	Companie companie3(4, 2017, "Trei Barcute SRL", "Inchirieri Cabane", 3, varste);
-	//companie3.afisare();
+	Companie companie3(4, 2017, marti, "Inchirieri Cabane", 3, varste);
 	cout << "companie3:\n";
 	cout << companie3;
 
 	cout << "SET TARA: \n";
 	companie1.setTara("Franta");
-	//companie1.afisare();
 	cout << companie1;
 
 	cout << "CONSTRUCTOR DE COPIERE\n";
 	cout << "companie4(companie1):\n";
 	Companie companie4(companie1);
-	//companie4.afisare();
 	cout << companie4;
 
 	cout << "companie5(companie2):\n";
 	Companie companie5(companie2);
-	//companie5.afisare();
 	cout << companie5;
 
 	cout << "GET - ERI SI SET - ERI\n";
@@ -1348,7 +1673,10 @@ void main() {
 
 	cout << "TARA ACTIVITATE: " << companie5.getTara() << endl << endl;
 
-	companie5.setNumeCompanie("Zara");
+	char* setNN = new char[strlen("Zara") + 1];
+	strcpy_s(setNN, strlen("Zara") + 1, "Zara");
+
+	companie5.setNumeCompanie(setNN);
 	companie5.setDomeniuActivitateCompanie("Vanzari haine");
 	companie5.setAnInfiintare(2002);
 	companie5.setTara("Franta");
@@ -1384,7 +1712,6 @@ void main() {
 
 	Companie companie6;
 	companie6 = companie3;
-	//companie6.afisare();
 	cout << companie6;
 
 	cout << "OPERATOR +\n";
@@ -1393,30 +1720,27 @@ void main() {
 
 	Companie companie7;
 	companie7 = companie5 + companie3;
-	//companie7.afisare();
 
 	cout << companie7;
 
 
-	Companie companie9;
+	/*Companie companie9;
 	cin >> companie9;
 	cout << endl;
-	cout << companie9;
+	cout << companie9;*/
 
-	cout << "-----------------------------------\n\n";
+	cout << "--------------------------------------------\n\n";
 
 	cout << "SEDII\n\n";
 
 	cout << "sediu 1";
 	cout << endl;
 	Sediu sediu1;
-	//sediu1.afisare();
 	cout << sediu1;
 
 	Sediu sediu2(10, "0742948226");
 	cout << "sediu2";
 	cout << endl;
-	//sediu2.afisare();
 	cout << sediu2;
 
 
@@ -1427,12 +1751,10 @@ void main() {
 	Sediu sediu3(13, 3, 81, "0717945560", locatie);
 	cout << "sediu3";
 	cout << endl;
-	//sediu3.afisare();
 	cout << sediu3;
 
 	cout << "SET SEDII: \n";
 	sediu2.setNrTotalSedii(9);
-	//sediu2.afisare();
 	cout << sediu2;
 
 
@@ -1440,11 +1762,9 @@ void main() {
 	cout << "sediu4(sediu1)";
 	cout << endl;
 	Sediu sediu4(sediu1);
-	//sediu4.afisare();
 	cout << sediu4;
 
 	Sediu sediu5(sediu3);
-	//sediu5.afisare();
 	cout << "sediu5(sediu3)";
 	cout << endl;
 	cout << sediu5;
@@ -1484,14 +1804,16 @@ void main() {
 	cout << endl;
 	Sediu sediu7;
 	sediu7 = sediu3;
-	//sediu7.afisare();
 	cout << sediu7;
 
-	cout << "SEDIU 8:\n ";
-	Sediu sediu8;
+	//cout << "SEDIU 8:\n ";
+	/*Sediu sediu8;
 	cin >> sediu8;
-	cout << endl << sediu8;
-	cout << "sediu9" << endl;
+	cout << endl << sediu8;*/
+
+
+	cout << "\n\nsediu9 operator +\n\n" << endl;
+
 	Sediu sediu9;
 	cout << "sediu9 = sediu7 + 10\n" << endl;
 	sediu9 = sediu7 + 10;
@@ -1503,12 +1825,10 @@ void main() {
 
 	Angajat angajat1;
 	cout << "angajat1\n";
-	//angajat1.afisare();
 	cout << angajat1;
 
 	cout << "angajat2\n";
 	Angajat angajat2(16, 6.5);
-	//angajat2.afisare();
 	cout << angajat2;
 
 
@@ -1518,23 +1838,19 @@ void main() {
 
 	cout << "angajat3\n";
 	Angajat angajat3(19, 13, "Stefan Gabriel", 23, domeniu);
-	//angajat3.afisare();
 	cout << angajat3;
 
 	angajat3.setvarstaPensionare(70);
-	//angajat3.afisare();
 	cout << angajat3;
 
 
 	cout << "CONSTRUCTOR DE COPIERE:\n";
 	cout << "angajat4(angajat3)\n";
 	Angajat angajat4(angajat3);
-	//angajat4.afisare();
 	cout << angajat4;
 
 	cout << "angajat5(angajat2)\n";
 	Angajat angajat5(angajat2);
-	//angajat5.afisare();
 	cout << angajat5;
 
 	cout << "GET-ERI SI SET-ERI\n\n";
@@ -1572,12 +1888,11 @@ void main() {
 	cout << "angajat6 = angajat2\n";
 	Angajat angajat6;
 	angajat6 = angajat2;
-	//angajat6.afisare();
 	cout << angajat6;
 
-	Angajat angajat7;
-	cin >> angajat7;
-	cout << endl << angajat7;
+	//Angajat angajat7;
+	//cin >> angajat7;
+	//cout << endl << angajat7;
 
 	cout << "angajat8 = angajat8 + 7\n";
 	Angajat angajat8;
@@ -1585,17 +1900,19 @@ void main() {
 	angajat8 = angajat8 + 7;
 	cout << angajat8;
 
-	Angajat angajat13;
+	/*Angajat angajat13;
 	cout << angajat13;
 	cin >> angajat13;
-	cout << angajat13;
+	cout << angajat13;*/
+
+	cout << "angajat operator +\n\n";
 
 	Angajat angajat14;
-	angajat14 = angajat13 + 13;
+	angajat14 = angajat8 + 13;
 	cout << angajat14;
 
 	cout << "-----------------------------------\n\n";
-
+	cout << "operatori\n\n";
 	string n;
 	n = (string)angajat1;
 
@@ -1628,7 +1945,7 @@ void main() {
 	int abc;
 	abc = (int)companie7;
 	string cba;
-	cba = (string)companie7;
+	cba = (char*)companie7;
 	cout << abc << endl << cba << endl;
 
 
@@ -1636,30 +1953,34 @@ void main() {
 
 	//vectori si matrici
 
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
+
 	Angajat* vectorAngajat = new Angajat[3];
-	for (int i = 0; i < 3; i++) {
+	/*for (int i = 0; i < 3; i++) {
 		cin >> vectorAngajat[i];
 		cout << endl;
-	}
+	}*/
 	for (int i = 0; i < 3; i++) {
 		cout << vectorAngajat[i] << endl << endl;
 	}
 	cout << endl;
+
+
 	Sediu* vectorSediu = new Sediu[2];
-	for (int i = 0; i < 2; i++) {
+	/*for (int i = 0; i < 2; i++) {
 		cin >> vectorSediu[i];
 		cout << endl;
-	}
+	}*/
 	cout << endl;
 	for (int i = 0; i < 2; i++) {
 		cout << vectorSediu[i] << endl << endl;
 	}
 
 	Companie* vectorCompanie = new Companie[2];
-	for (int i = 0; i < 2; i++) {
+	/*for (int i = 0; i < 2; i++) {
 		cin >> vectorCompanie[i];
 		cout << endl;
-	}
+	}*/
 	cout << endl;
 	for (int i = 0; i < 2; i++) {
 		cout << vectorCompanie[i];
@@ -1670,38 +1991,40 @@ void main() {
 	delete[]vectorCompanie;
 	delete[]vectorSediu;
 
-	Companie** matrice = new Companie * [2];
-	for (int i = 0; i < 2; i++) {
-		matrice[i] = new Companie[2];
-	}
+	//Companie** matrice = new Companie * [2];
+	//for (int i = 0; i < 2; i++) {
+	//	matrice[i] = new Companie[2];
+	//}
 
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < 2; j++) {
-			cin>> matrice[i][j];
-			cout << endl;
-		}
-	}
+	//for (int i = 0; i < 2; i++) {
+	//	for (int j = 0; j < 2; j++) {
+	//		cin>> matrice[i][j];
+	//		cout << endl;
+	//	}
+	//}
 
-	for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < 2; j++) {
-			cout << matrice[i][j];
-		}
+	//for (int i = 0; i < 2; i++) {
+	//	for (int j = 0; j < 2; j++) {
+	//		cout << matrice[i][j];
+	//	}
 
-		for (int i = 0; i < 2; i++) {
-			delete[]matrice[i];
-		}
-		delete[]matrice;
-	}
+	//	for (int i = 0; i < 2; i++) {
+	//		delete[]matrice[i];
+	//	}
+	//	delete[]matrice;
+	//}
 
 	cout << "-----------------------------------\n\n";
+
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 
 	//relatia de has-a
 
 	Angajat angajatRelatie1;
-	cin >> angajatRelatie1;
+	//cin >> angajatRelatie1;
 	cout << endl;
 	Angajat angajatRelatie2;
-	cin >> angajatRelatie2;
+	//cin >> angajatRelatie2;
 	cout << endl;
 
 	Angajat* vector = new Angajat[2]{ angajatRelatie1 ,angajatRelatie2 };
@@ -1711,8 +2034,12 @@ void main() {
 
 	cout << "-----------------------------------\n\n";
 
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 6~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 
-	Companie companieFisierText;
+	cout << "fisiere\n";
+
+
+	/*Companie companieFisierText;
 	cin >> companieFisierText;
 	ofstream g("Companie.txt", ios::app);
 	g << companieFisierText;
@@ -1722,9 +2049,111 @@ void main() {
 	cin >> sediuFisierText;
 	ofstream f("Sediu.txt", ios::app);
 	f << sediuFisierText;
-	f.close();
+	f.close();*/
 
 
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 7~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
+
+
+	char* locatieCladireS = new char[strlen("Busteni") + 1];
+	strcpy_s(locatieCladireS, strlen("Busteni") + 1, "Busteni");
+	Cladire c1;
+	Cladire c2(6, 100, 17);
+	Cladire c3(15, 1980, 1, 450, 13, 7, 231.2, "999-343-234", locatieCladireS);
+	cout << c1;
+	cout << c2;
+	cout << c3;
+
+	Cladire cCopie(c3);
+	cout << cCopie;
+	Cladire cEgal;
+	cEgal = cCopie;
+	cout << cEgal;
+
+	cout << "------------------------------------------------" << endl << endl;
+
+	Manager om1;
+	Manager om2(3, 5.6);
+	Manager om3(4, 1.87, "Piept de pui", 13, 10);
+	cout << om1;
+	cout << om2;
+	cout << om3;
+	cout << om1;
+
+	Manager omCopiat(om3);
+	cout << omCopiat;
+	Manager omEgal;
+	omEgal = omCopiat;
+	cout << omEgal;
+
+	om1.setInaltime(1.92);
+	cout << om1.getInaltime() << endl;
+	om1.setNrMembri(6);
+	cout << om1.getNrMembri();
+	cout << endl;
+	om1.setMancare("Carne de vita");
+	cout << om1.getMancare();
+	cout << endl << endl;
+
+
+
+	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 8~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
+
+	char* dinamic = new char[strlen("Brasov") + 1];
+	strcpy_s(dinamic, strlen("Brasov") + 1, "Brasov");
+
+	char* dinamic1 = new char[strlen("Targu Mures") + 1];
+	strcpy_s(dinamic1, strlen("Targu Mures") + 1, "Targu Mures");
+
+	char* dinamic2 = new char[strlen("Sibiu") + 1];
+	strcpy_s(dinamic2, strlen("Sibiu") + 1, "Sibiu");
+
+
+
+	Informatii* inf = NULL;
+	inf = new Cladire();
+
+	ComplexCuSedii c;
+	c[0] = inf;
+	c[1] = new Sediu();
+	c[2] = new Sediu(1, 9, 181, "332-344-673", dinamic);
+	c[3] = new Sediu(14, "930-242-111");
+	c[4] = new Sediu(1, 7, 143.4, "332-344-673", dinamic1);
+	c[5] = new Sediu(1, 10, 201.11, "332-344-673", dinamic2);
+	c[6] = new Cladire();
+	c[7] = new Cladire(11, 432, 13);
+	c[8] = new Cladire(20, 1032, 15);
+	c[9] = new Cladire(15, 850, 16);
+
+	for (int i = 0; i < c.getNS(); i++) {
+		c[i]->afisareInformatii();
+	}
+
+
+
+	cout << endl << endl;
+
+
+	Descriere* d = NULL;
+	d = new Angajat();
+
+	SediuCuAngajati sediu;
+	sediu[0] = d;
+	sediu[1] = new Angajat(21);
+	sediu[2] = new Angajat(53);
+	sediu[3] = new Angajat(27);
+	sediu[4] = new Angajat(23);
+	sediu[5] = new Manager();
+	sediu[6] = new Manager(7, 4);
+	sediu[7] = new Manager(1, 3.2);
+	sediu[8] = new Manager(3, 5.3);
+	sediu[9] = new Manager(2, 4.5);
+
+	for (int i = 0; i < sediu.getNrA(); i++) {
+		sediu[i]->caracteristici();
+	}
+
+	
 
 }
 
