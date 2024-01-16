@@ -55,7 +55,6 @@ public:
 	explicit operator float() {
 		return this->salariu;
 	}
-
 	
 	const int getIDAngajat()  {
 
@@ -167,7 +166,6 @@ public:
 
 	}
 
-
 	Angajat() :id(14)
 
 	{
@@ -184,6 +182,7 @@ public:
 
 
 	}
+
 	Angajat(int varsta) :id(14)
 
 	{
@@ -330,8 +329,6 @@ ostream& operator<<(ostream& dinozaur, const Angajat& a) {
 }
 
 int Angajat::varstaPensionare = 65;
-
-
 
 class Manager :public Angajat {
 private:
@@ -1445,15 +1442,18 @@ istream& operator>>(istream& citire, Companie& c) {
 
 	}
 	if (c.nume != NULL) {
+	
 		delete[]c.nume;
+	
 	}
 	
 	string aux1;
-	cout << "Nume companie: ";
-	cin.ignore();
-	getline(citire, aux1);
 
+	cout << "Nume companie: ";
 	
+	cin.ignore();
+	
+	getline(citire, aux1);
 
 	c.nume = new char[aux1.length() + 1];
 	strcpy_s(c.nume, aux1.length() + 1, aux1.c_str());
@@ -1724,10 +1724,10 @@ void main() {
 	cout << companie7;
 
 
-	/*Companie companie9;
-	cin >> companie9;
-	cout << endl;
-	cout << companie9;*/
+	//Companie companie9;
+	//cin >> companie9;
+	//cout << endl;
+	//cout << companie9;
 
 	cout << "--------------------------------------------\n\n";
 
@@ -1955,6 +1955,8 @@ void main() {
 
 	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 4~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 
+	cout << "\nVECTOR\n";
+
 	Angajat* vectorAngajat = new Angajat[3];
 	/*for (int i = 0; i < 3; i++) {
 		cin >> vectorAngajat[i];
@@ -1991,30 +1993,31 @@ void main() {
 	delete[]vectorCompanie;
 	delete[]vectorSediu;
 
-	//Companie** matrice = new Companie * [2];
-	//for (int i = 0; i < 2; i++) {
-	//	matrice[i] = new Companie[2];
-	//}
+	cout << "\nMATRICE\n";
 
-	//for (int i = 0; i < 2; i++) {
-	//	for (int j = 0; j < 2; j++) {
-	//		cin>> matrice[i][j];
-	//		cout << endl;
-	//	}
-	//}
+	Companie** matrice = new Companie * [2];
+	for (int i = 0; i < 2; i++) {
+		matrice[i] = new Companie[2];
+	}
 
-	//for (int i = 0; i < 2; i++) {
-	//	for (int j = 0; j < 2; j++) {
-	//		cout << matrice[i][j];
-	//	}
+	/*for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			cin>> matrice[i][j];
+			cout << endl;
+		}
+	}*/
 
-	//	for (int i = 0; i < 2; i++) {
-	//		delete[]matrice[i];
-	//	}
-	//	delete[]matrice;
-	//}
-
-	cout << "-----------------------------------\n\n";
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			cout << matrice[i][j];
+		}
+	}
+		
+	for (int i = 0; i < 2; i++) {
+		delete[]matrice[i];
+	}
+		delete[]matrice;
+	
 
 	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 5~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 
@@ -2032,24 +2035,31 @@ void main() {
 	Proiect primulProiect("Project X", 12, 43000, 2, vector);
 	cout << primulProiect;
 
-	cout << "-----------------------------------\n\n";
+	//cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 6~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
 
-	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 6~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
-
-	cout << "fisiere\n";
+	//cout << "fisiere\n";
 
 
-	/*Companie companieFisierText;
-	cin >> companieFisierText;
-	ofstream g("Companie.txt", ios::app);
-	g << companieFisierText;
-	g.close();
+	//Companie companieFisierText;
+	//cin >> companieFisierText;
+	//ofstream g("Companie.txt", ios::app);
+	//g << companieFisierText;
+	//g.close();
 
-	Sediu sediuFisierText;
-	cin >> sediuFisierText;
-	ofstream f("Sediu.txt", ios::app);
-	f << sediuFisierText;
-	f.close();*/
+	//Sediu sediuFisierText;
+	//cin >> sediuFisierText;
+	//ofstream f("Sediu.txt", ios::app);
+	//f << sediuFisierText;
+	//f.close();
+
+	//Angajat ang1;
+	//fstream ang13("Angajat.bin", ios::out | ios::binary);
+	//ang13.write((char*)&ang1, sizeof(Angajat));
+	//ang13.close();
+
+	//fstream z("Angajat.bin", ios::in | ios::binary);
+	//z.read((char*)&ang1, sizeof(Angajat));
+	//z.close();
 
 
 	cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~PROIECT FAZA 7~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n";
@@ -2066,9 +2076,14 @@ void main() {
 
 	Cladire cCopie(c3);
 	cout << cCopie;
+	cout << endl;
 	Cladire cEgal;
 	cEgal = cCopie;
 	cout << cEgal;
+	cout << endl;
+
+	Sediu* pSed = &c3;
+	cout << *pSed;
 
 	cout << "------------------------------------------------" << endl << endl;
 
@@ -2153,10 +2168,10 @@ void main() {
 		sediu[i]->caracteristici();
 	}
 
-	
+	delete inf;
+	delete d;
+
 
 }
-
-
 
 
